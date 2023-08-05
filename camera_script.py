@@ -14,6 +14,7 @@ import RPi.GPIO as GPIO
 
 SENSOR_PIN = 18
 GREEN_LED = 8
+RED_LED = 12
 
 W = 1296
 H = 972
@@ -21,7 +22,6 @@ FPS = 18
 
 IP = '192.168.0.21'
 PORT = 5000
-
 
 encoder = H264Encoder(bitrate=10000000)
 
@@ -33,7 +33,7 @@ def start_recording():
 	#camera_data = CameraData()
 	date = datetime.now().strftime("%m_%d_%H_%M_%S")
 	output = f"Videos/di8_{str(date)}.h264"
-
+	GPIO.output(RED_LED, GPIO.HIGH)
 	camera.start_recording(encoder, output)
 	print('start')
 
@@ -41,6 +41,7 @@ def stop_recording():
 	#global camera_data
 	global camera
 	camera.stop_recording()
+	GPIO.output(RED_LED, GPIO.LOW)
 	#camera_data.stop()
 
 	print('stop')
@@ -77,6 +78,7 @@ def sensor_change(pin):
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SENSOR_PIN, GPIO.IN)
 GPIO.setup(GREEN_LED, GPIO.OUT)
+GPIO.setup(RED_LED, GPIO.OUT)
 GPIO.output(GREEN_LED, GPIO.HIGH)
 GPIO.add_event_detect(SENSOR_PIN, GPIO.BOTH, sensor_change)
 
