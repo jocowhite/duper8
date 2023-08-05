@@ -4,6 +4,7 @@
 import glob
 import socket
 import time
+from datetime import datetime
 from threading import Timer
 import picamera2
 from picamera2.encoders import H264Encoder
@@ -23,21 +24,24 @@ PORT = 5000
 
 
 encoder = H264Encoder(bitrate=10000000)
-output = "Videos/test.h264"
+
 
 
 def start_recording():
-	global camera_data
+	#global camera_data
 	global camera
-	camera_data = CameraData()
+	#camera_data = CameraData()
+	date = datetime.now().strftime("%m_%d_%H_%M_%S")
+	output = f"Videos/di8_{str(date)}.h264"
+
 	camera.start_recording(encoder, output)
 	print('start')
 
 def stop_recording():
-	global camera_data
+	#global camera_data
 	global camera
 	camera.stop_recording()
-	camera_data.stop()
+	#camera_data.stop()
 
 	print('stop')
 

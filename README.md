@@ -37,6 +37,11 @@ sudo apt-get -y install gpac
 
 ### Workflow 
 
-- Convert h265 to mp4 -> MP4Box -add test.h264 test.mp4
-
-- Copy File to Desktop -> scp pi@duper8:/home/pi/test.mp4 /Users/hpe/Desktop
+- Convert h265 to mp4 -> 
+```
+MP4Box -add test.h264 test.mp4
+```
+- Copy File to Desktop -> 
+```
+scp pi@duper8:/home/pi/test.mp4 /Users/hpe/Desktop
+```
