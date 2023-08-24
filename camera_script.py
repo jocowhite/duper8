@@ -116,5 +116,6 @@ try:
 	while True:
 		time.sleep(1)
 	#camera.wait_recording(60)
+	
 finally:
 	pass
