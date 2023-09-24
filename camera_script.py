@@ -112,10 +112,12 @@ try:
 	camera = picamera2.Picamera2()
 	camera.resolution = (W, H)
 	camera.framerate = FPS
+	camera.configure(camera.create_preview_configuration())
+	camera.set_controls({"ExposureTime": 10000, "AnalogueGain": 1.0})
 
 	while True:
 		time.sleep(1)
 	#camera.wait_recording(60)
-	
+
 finally:
 	pass

@@ -1,6 +1,9 @@
 import picamera2
+from picamera2.encoders import H264Encoder
 import time
 from PIL import Image
+
+encoder = H264Encoder(bitrate=10000000)
 
 def calculate_average_pixel_value(image):
     # Convert the image to grayscale for simplicity
@@ -19,9 +22,6 @@ def is_dark(pixel_value):
     # Check if the pixel value is considered dark based on your criteria
     # You can adjust the threshold values as per your requirement
     darkness_threshold = 60  # Adjust this value as needed
-    if darkness_threshold == 60:
-        print("Darkness Threshold is 60. Did you set the value?") # Reminds user to set darkness_threshold
-        pass 
     return pixel_value < darkness_threshold
 
 def record_when_light():
@@ -32,17 +32,20 @@ def record_when_light():
         camera.resolution = resolution
         camera.framerate = fps
         camera.start_preview()
-        camera.start()
         time.sleep(2)  # Wait for the camera to adjust to the light conditions
         
         recording = False
         
         while True:
 
-            print("Capture_File")
+            #print("Capture_File")
+            try:
+                camera.start()
+            except:
+                print()
             camera.capture_file('image.jpg')  # Capture a frame
             # Open the captured image using PIL
-            print("open Image")
+            #print("open Image")
             
             # Open the captured image using PIL
             image = Image.open('image.jpg')
@@ -52,15 +55,18 @@ def record_when_light():
             
             if is_dark(pixel_value):
                 # If it's dark, stop recording if it's currently recording
-                if camera.recording:
+                if recording:
                     camera.stop_recording()
                     print("Stopped Recording.")
+                    recording = False
             else:
                 # If it's light, start recording if it's not currently recording
-                if not camera.recording:
-                    video_file = time.strftime("%y-%m-%d %H-%M-%S") + ".h264"  # Specify the file name for the recorded video
-                    camera.start_recording(video_file)
+                video_file = time.strftime("%y-%m-%d %H-%M-%S") + ".h264"
+                if not recording:
+                    camera.stop()
                     print("Started Recording.")
+                    camera.start_recording(encoder, video_file)
+                    recording = True
             
             time.sleep(2)  # Wait for 1 second before capturing the next frame
 #time.sleep(180) #waits for pi to load up for launching on boot
