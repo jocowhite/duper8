@@ -6,11 +6,11 @@ import socket
 import time
 from datetime import datetime
 from threading import Timer
-import picamera2
-from picamera2.encoders import H264Encoder
 import RPi.GPIO as GPIO
 
-
+from picamera2.encoders import H264Encoder
+from picamera2 import Picamera2
+import time
 
 SENSOR_PIN = 18
 GREEN_LED = 8
@@ -29,18 +29,17 @@ encoder = H264Encoder(bitrate=10000000)
 
 def start_recording():
 	#global camera_data
-	global camera
 	#camera_data = CameraData()
 	date = datetime.now().strftime("%m_%d_%H_%M_%S")
 	output = f"Videos/di8_{str(date)}.h264"
 	GPIO.output(RED_LED, GPIO.HIGH)
-	camera.start_recording(encoder, output)
+	picam2.start_recording(encoder, output)
 	print('start')
 
 def stop_recording():
 	#global camera_data
-	global camera
-	camera.stop_recording()
+	#global picam2
+	picam2.stop_recording()
 	GPIO.output(RED_LED, GPIO.LOW)
 	#camera_data.stop()
 
@@ -82,39 +81,14 @@ GPIO.setup(RED_LED, GPIO.OUT)
 GPIO.output(GREEN_LED, GPIO.HIGH)
 GPIO.add_event_detect(SENSOR_PIN, GPIO.BOTH, sensor_change)
 
-
-# This class writes data to file and streams it in parallel
-class CameraData(object):
-	def __init__(self):
-		self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		self.client_socket.connect((IP, PORT))
-		self.connection = self.client_socket.makefile('wb')
-		self.file = open(self.create_unique_file_name(), 'wb')
-
-	def create_unique_file_name(self):
-		return '%d.h264' % len(glob.glob('*'))
-
-	def write(self, s):
-		self.connection.write(s)
-		self.file.write(s)
-
-	def flush(self):
-		pass
-
-	def stop(self):
-		self.connection.close()
-		self.client_socket.close()
-		self.file.close()
-
-
 # Make a file-like object out of the connection
 try:
-	camera = picamera2.Picamera2()
-	camera.resolution = (W, H)
-	camera.framerate = FPS
-	#camera.shutter_speed = 1/20
-	camera.configure(camera.create_preview_configuration())
-	camera.set_controls({"ExposureTime": 55, "AnalogueGain": 1.0})
+	picam2 = Picamera2()
+	video_config = picam2.create_video_configuration(controls={"FrameDurationLimits": (55555, 55555)})
+
+
+	picam2.configure(video_config)
+	encoder = H264Encoder(bitrate=10000000)
 
 	while True:
 		time.sleep(1)
