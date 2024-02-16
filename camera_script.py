@@ -31,7 +31,7 @@ def start_recording():
 	#global camera_data
 	#camera_data = CameraData()
 	date = datetime.now().strftime("%m_%d_%H_%M_%S")
-	output = f"Videos/di8_{str(date)}.h264"
+	output = f"/home/duper8/Videos/di8_{str(date)}.h264"
 	GPIO.output(RED_LED, GPIO.HIGH)
 	picam2.start_recording(encoder, output)
 	print('start')

@@ -45,3 +45,15 @@ MP4Box -add test.h264 test.mp4
 ```
 scp pi@duper8:/home/pi/test.mp4 /Users/hpe/Desktop
 ```
+
+
+### for chron job
+
+@reboot sh /home/duper8/launcher.sh >/home/duper8/logs/cronlog 2>&1
+
+
+### Copy files to folder
+ssh duper8@duper8.local "python convert.py"
+scp -r duper8@duper8.local:Videos/MP4 /Volumes/T7\ Shield/Joel\ Weiss/Bilder_Videos/duper8/2024/0216_ersteAufnahmen
+ssh duper8@duper8.local "rm /home/duper8/Videos/MP4/*"
+ssh duper8@duper8.local "rm /home/duper8/Videos/*"
